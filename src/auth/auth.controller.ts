@@ -17,6 +17,12 @@ import { Csrf, Msg } from './interfaces/auth.interface';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Get('/csrf')
+  getCsrfToken(@Req() req: Request): Csrf {
+    // expressのRequestにはcsrf-tokenを生成するメソッドが用意されているので呼び出してjsonで返却する
+    return { csrfToken: req.csrfToken() }
+  }
+
   @Post('signup')
   signUp(@Body() dto: AuthDto): Promise<Msg> {    // @Body()としてBodyデコレータを使用することでリクエストのbodyを取得することができる。送られてくるのはAuthDtoで定義しているemailとpassword
     return this.authService.signUp(dto)
@@ -41,7 +47,7 @@ export class AuthController {
     const jwt = await this.authService.login(dto);
     res.cookie('access_token', jwt.accessToken, {
       httpOnly: true,
-      secure: false,     // httpsにする必要がある localではfalseにしておかなくてはならない、デプロイ時にはtrueにする
+      secure: true,     // httpsにする必要がある localではfalseにしておかなくてはならない、デプロイ時にはtrueにする
       sameSite: 'none',
       path: '/',
     })
@@ -59,7 +65,7 @@ export class AuthController {
   ): Msg {
     res.cookie('access_token', '', {
       httpOnly: true,
-      secure: false,
+      secure: true,
       sameSite: 'none',
       path: '/'
     })
