@@ -12,7 +12,10 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({whitelist: true}))   // whitelist: true -> dtoに含まれない項目例えばnicknameなども含まれた場合、nicknameは省いてくれる
   app.enableCors({
     credentials: true,
-    origin: ['http://localhost:3000'],
+    origin: [
+      'http://localhost:3000', 
+      'https://todo-nextjs-ruby.vercel.app'
+    ],
   })
   app.use(cookieParser())
   app.use(
